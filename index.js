@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+require('dotenv').config()
 
 const { books } = require('./src/routes/books/book')
 const { genre } = require('./src/routes/genre/genre')
