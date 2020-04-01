@@ -53,7 +53,7 @@ module.exports = {
                                     const maxId = result[0].id
                                     const encryptedPassword = bcryptjs.hashSync(password)
                                     const verify = uuid()
-                                    db.query(`INSERT INTO user_privates (username,password,email,verify, id_user_detail) VALUES('${username}','${encryptedPassword}','${email}', '${verify}', ${maxId})`, (error, result) => {
+                                    db.query(`INSERT INTO user_privates (username,password,email,verification_code, id_user_detail) VALUES('${username}','${encryptedPassword}','${email}', '${verify}', ${maxId})`, (error, result) => {
                                         if (error) {
                                             console.log('sini')
                                             reject(new Error('Error database sistem'))

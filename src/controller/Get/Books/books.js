@@ -1,5 +1,5 @@
-const books = require('../../../models/Get/books/books')
-
+const books = require('../../../models/get/books/books')
+const { paginate } = require('../../../pagination/pagination')
 
 const idBooks = async (req, res) => {
     try {
@@ -78,12 +78,15 @@ const idAuthorBooks = async (req, res) => {
 
 const allBooks = async (req, res) => {
     try {
-        const data = await books.getAllBooks()
+        const { data, total } = await books.getAllBooks(req)
+        const pagination = paginate(req, 'books', total)
+        console.log(pagination)
         if (data) {
             res.status(200).send({
                 success: true,
                 message: 'berhasil dibuat',
-                data
+                data,
+                pagination,
             })
         } else {
             res.status(401).send({

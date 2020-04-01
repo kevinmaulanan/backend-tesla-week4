@@ -1,4 +1,4 @@
-const genre = require('../../../models/Post/genre/genre')
+const genre = require('../../../models/post/genre/genre')
 
 const postGenre = async (req, res) => {
     try {

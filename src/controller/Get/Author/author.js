@@ -1,4 +1,4 @@
-const processAuthors = require('../../../models/Get/Author/author')
+const processAuthors = require('../../../models/get/author/author')
 
 
 const getAllAuthors = async (req, res) => {
@@ -27,7 +27,7 @@ const getAllAuthors = async (req, res) => {
 
 const getAuthorById = async (req, res) => {
     try {
-        const id = req.body
+        const id = req.params.id
         const dataAllAuthor = await processAuthors.getAuthorById(id)
         if (dataAllAuthor) {
             res.status(200).send({

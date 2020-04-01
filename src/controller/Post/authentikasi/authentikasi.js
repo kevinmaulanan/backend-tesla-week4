@@ -1,4 +1,4 @@
-const processAuthentifikasi = require('../../../models/Post/authentikasi/authentikasi')
+const processAuthentifikasi = require('../../../models/post/authentikasi/authentikasi')
 const jwt = require('jsonwebtoken')
 
 const registerAuthentifikasi = async (req, res) => {
