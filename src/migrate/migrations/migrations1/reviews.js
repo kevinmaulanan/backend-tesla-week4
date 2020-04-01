@@ -6,8 +6,8 @@ db.query(
       id_user INT,
       id_book INT,
       review TEXT,
-      FOREIGN KEY(id_user) REFERENCES user_details(id) ON DELETE CASCADE,
-      FOREIGN KEY(id_book) REFERENCES books(id) ON DELETE CASCADE
+      FOREIGN KEY(id_user) REFERENCES user_details(id) ON DELETE CASCADE ON UPDATE CASCADE,
+      FOREIGN KEY(id_book) REFERENCES books(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
     (error, results, fields) => {
       if (error) throw error
