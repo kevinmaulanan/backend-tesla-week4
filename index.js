@@ -2,6 +2,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 
 const { books } = require('./src/routes/books/book')
+const { genre } = require('./src/routes/genre/genre')
+const { author } = require('./src/routes/author/author')
 
 const app = express()
 
@@ -10,6 +12,8 @@ app.use(bodyParser.json())
 
 
 app.use('/books', books)
+app.use('/genre', genre)
+app.use('/author', author)
 
 app.get('/', (req, res) => {
     res.status(200).send('Server is Running')
