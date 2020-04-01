@@ -1,9 +1,9 @@
-const genre = require('../../models/genre')
+const genre = require('../../../models/Post/genre/genre')
 
-const postGenreBooks = async (req, res) => {
+const postGenre = async (req, res) => {
     try {
-        const { idBook, idGenre } = req.body
-        const dataPostGenre = await books.postGenreBook(idBook, idGenre)
+        const { nameGenre } = req.body
+        const dataPostGenre = await genre.postGenreBook(nameGenre)
         if (dataPostGenre) {
             res.status(200).send({
                 success: true,
@@ -25,5 +25,5 @@ const postGenreBooks = async (req, res) => {
 
 
 module.exports = {
-
+    postGenre
 }
