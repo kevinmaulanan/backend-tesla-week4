@@ -1,7 +1,7 @@
 const mysql = require('mysql')
 require('dotenv').config()
 
-export const db = mysql.createConnection({
+const db = mysql.createConnection({
   host: process.env.DB_SERVER,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -37,7 +37,6 @@ function  migrate() {
   db.end()
 }
 
-
-
+module.exports = { db }
 
 migrate()

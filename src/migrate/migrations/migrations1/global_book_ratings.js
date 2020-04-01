@@ -1,4 +1,4 @@
-import { db } from '../../index'
+const { db } = require('../../index')
 
 db.query(
     `CREATE TABLE global_book_ratings (

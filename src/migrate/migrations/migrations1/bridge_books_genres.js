@@ -1,4 +1,4 @@
-import { db } from '../../index'
+const { db } = require('../../index')
 
 db.query(
     `CREATE TABLE bridge_books_genres (
