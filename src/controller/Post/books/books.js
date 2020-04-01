@@ -1,4 +1,4 @@
-const books = require('../../../models/Post/books/books')
+const books = require('../../../models/post/books/books')
 
 
 const postBooks = async (req, res) => {

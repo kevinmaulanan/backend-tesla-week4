@@ -1,4 +1,4 @@
-const processAuthor = require('../../../models/Post/author/author')
+const processAuthor = require('../../../models/post/author/author')
 
 const addAuthor = async (req, res) => {
 

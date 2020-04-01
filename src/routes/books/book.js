@@ -1,6 +1,6 @@
 const books = require('express').Router()
-const { allBooks, idBooks, idGenreBooks, idAuthorBooks } = require('../../controller/Get/Books/books')
-const { postBooks, postGenreBooks } = require('../../controller/Post/books/books')
+const { allBooks, idBooks, idGenreBooks, idAuthorBooks } = require('../../controller/get/books/books')
+const { postBooks, postGenreBooks } = require('../../controller/post/books/books')
 
 books.post('/', postBooks)
 books.post('/genre', postGenreBooks)
