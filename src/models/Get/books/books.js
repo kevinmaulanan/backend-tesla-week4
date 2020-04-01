@@ -4,7 +4,7 @@ module.exports = {
 
     getAllBooks: () => {
         return new Promise((resolve, reject) => {
-            db.query(`SELECT books.id, books.name_book, list.name_list, books.description_book, genre.name_genre, author.name_author FROM books JOIN author ON books.id_author=author.id JOIN bridge_books_genre ON books.id= bridge_books_genre.id_books JOIN genre ON bridge_books_genre.id_genre=genre.id JOIN list ON books.id_list=list.id where books.on_delete=0 `, (error, result) => {
+            db.query(`SELECT books.id, books.book_name, books.book_image, list.list_name, books.description, genre.name_genre, author.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN bridge_books_genres ON books.id= bridge_books_genres.id_books JOIN genres ON bridge_books_genres.id_genre=genres.id JOIN lists ON books.id_list=lists.id where books.is_deleted=0 `, (error, result) => {
                 if (error) {
                     reject(error)
                 } else {
