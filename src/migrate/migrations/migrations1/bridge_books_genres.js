@@ -5,8 +5,8 @@ db.query(
       id INT PRIMARY KEY AUTO_INCREMENT,
       id_book INT,
       id_genre INT,
-      FOREIGN KEY (id_book) REFERENCES books(id) ON DELETE CASCADE,
-      FOREIGN KEY (id_genre) REFERENCES genres(id) ON DELETE CASCADE
+      FOREIGN KEY (id_book) REFERENCES books(id) ON DELETE CASCADE ON UPDATE CASCADE,
+      FOREIGN KEY (id_genre) REFERENCES genres(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
     (error, results, fields) => {
       if (error) throw error
