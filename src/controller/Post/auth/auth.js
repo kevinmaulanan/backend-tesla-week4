@@ -4,8 +4,6 @@ const jwt = require('jsonwebtoken')
 const register = async (req, res) => {
     try {
         const { username, password, email } = req.body
-        console.log('register')
-        console.log(username, password, email)
         const data = await authModel.register(username, password, email)
         if (data) {
             res.status(200).send({
@@ -16,7 +14,7 @@ const register = async (req, res) => {
         } else {
             res.status(401).send({
                 success: false,
-                message: 'Failed to register'
+                message: 'Failed to register account.'
             })
         }
     } catch (error) {
@@ -51,16 +49,16 @@ const verifyUser = async (req, res) => {
 }
 
 
-const loginAuthentikasi = async (req, res) => {
+const login = async (req, res) => {
     try {
         const { username, password } = req.body
-        const data = await authModel.loginAuthentikasi(username, password)
+        const data = await authModel.login(username, password)
         const getUser = { ...data }
         const token = jwt.sign(getUser, process.env.APP_KEY, null)
         if (data) {
             res.status(200).send({
                 success: true,
-                message: 'Login berhasil',
+                message: 'Login success',
                 data: data,
                 token
             })
@@ -68,7 +66,7 @@ const loginAuthentikasi = async (req, res) => {
         } else {
             res.status(500).send({
                 success: false,
-                message: 'Kesalahan pada saat login'
+                message: 'Server error'
             })
         }
     } catch (error) {
@@ -83,6 +81,6 @@ const loginAuthentikasi = async (req, res) => {
 
 module.exports = {
     register,
-    loginAuthentikasi,
+    login,
     verifyUser,
 }

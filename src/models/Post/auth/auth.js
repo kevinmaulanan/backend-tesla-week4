@@ -6,66 +6,68 @@ const sendEmail = require('../../../utilities/sendEmail')
 
 
 module.exports = {
-    loginAuthentikasi: (username, password) => {
+    login: (username, password) => {
         return new Promise((resolve, reject) => {
-            db.query(`SELECT COUNT(*) as total FROM user_privates where username='${username}'`, (error, result) => {
+            // Check is there any user with username provided
+            db.query(`SELECT COUNT(*) as total FROM user_privates WHERE username='${username}'`, (error, result) => {
                 const { total } = result[0]
                 if (total !== 1) {
-                    reject(new Error('Username tidak ada'))
+                    reject(new Error('Wrong username or password'))
                 } else {
-                    db.query(`SELECT *FROM user_privates where username='${username}'`, (error, result) => {
+                    // Check is the user has verify his/her account
+                    db.query(`SELECT * FROM user_privates WHERE username='${username}'`, (error, result) => {
                         const isVerify = result[0].is_verify
                         if (isVerify === 0) {
                             console.log(error)
-                            reject(new Error('Username tersebut belum di verifikasi, silahkan cek email terlebih dahulu'))
+                            reject(new Error('Your username has not been verified. Please verify your account first.'))
                         } else {
                             const passwordData = result[0].password
                             const comparePassword = bcryptjs.compareSync(password, passwordData)
                             if (comparePassword == false) {
-                                reject(new Error('Password Salah'))
+                                reject(new Error('Wrong username or password'))
                             } else {
+                                // Get user data
                                 db.query(`SELECT user_privates.id, user_details.user_fullname, user_details.user_image, user_privates.username, user_privates.email FROM user_privates JOIN user_details ON user_privates.id_user_detail = user_details.id WHERE username='${username}'`, (error, result) => {
                                     if (error) {
                                         console.log(error)
-                                        reject(new Error('Kesalahan query'))
+                                        reject(new Error('Server error: Wrong query'))
                                     } else {
                                         const data = result[0]
                                         resolve(data)
                                     }
                                 })
-
-
                             }
                         }
                     })
                 }
             })
-
         })
     },
 
     register: (username, password, email) => {
-        console.log('register')
         return new Promise((resolve, reject) => {
+            // Check if the user has specified the required fields
             if (username === "" || password === "" || email === "") {
                 reject(new Error('Cannot empty. Please provide the required fields.'))
             } else {
-                db.query(`SELECT COUNT(*) as total FROM user_privates where username='${username}'`, (error, result) => {
+                // Check if the username is already used
+                db.query(`SELECT COUNT(*) as total FROM user_privates WHERE username='${username}'`, (error, result) => {
                     const { total } = result[0]
                     if (total !== 0) {
                         reject(new Error('Username is already used.'))
                     } else {
+                        // Insert user data to user_details table
                         db.query(`INSERT INTO user_details (user_fullname) VALUES('${username}')`, (error, result) => {
                             if (error) {
                                 reject(new Error('Wrong query in user detail.'))
                             } else {
-                                db.query(`select max(id) as id from user_details`, (error, result) => {
+                                db.query(`SELECT max(id) AS id FROM user_details`, (error, result) => {
                                     const maxId = result[0].id
                                     const encryptedPassword = bcryptjs.hashSync(password)
                                     const verify = uuid()
+                                    // Insert user data to user_privates table
                                     db.query(`INSERT INTO user_privates (username,password,email,verification_code, id_user_detail) VALUES('${username}','${encryptedPassword}','${email}', '${verify}', ${maxId})`, (error, result) => {
                                         if (error) {
-                                            console.log('sini')
                                             reject(new Error('Server error'))
                                         } else {
                                             sendEmail(email, verify).then((status) => {
