@@ -7,16 +7,15 @@ const getAllAuthors = async (req, res) => {
         if (dataAllAuthor) {
             res.status(200).send({
                 success: true,
-                message: 'Data Author berhasil ditampilkan',
+                message: 'Success to get all authors',
                 data: dataAllAuthor
             })
         } else {
             res.status(500).send({
                 success: false,
-                message: 'kesalahan pada sistem Author'
+                message: 'Server error: Failed to get all authors'
             })
         }
-
     } catch (error) {
         res.send({
             success: false,
@@ -32,16 +31,15 @@ const getAuthorById = async (req, res) => {
         if (dataAllAuthor) {
             res.status(200).send({
                 success: true,
-                message: 'Data Author berhasil ditampilkan',
+                message: `Success to get author with id ${id}`,
                 data: dataAllAuthor
             })
         } else {
             res.status(500).send({
                 success: false,
-                message: 'kesalahan pada sistem Author'
+                message: `Server error: Failed to get author with id ${id}`
             })
         }
-
     } catch (error) {
         res.send({
             success: false,

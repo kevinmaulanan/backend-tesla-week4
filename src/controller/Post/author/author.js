@@ -4,7 +4,7 @@ const addAuthor = async (req, res) => {
 
     try {
         const { nameAuthor, imageAuthor } = req.body
-        const data = await processAuthor.addAuthors(nameAuthor, imageAuthor)
+        const data = await processAuthor.addAuthor(nameAuthor, imageAuthor)
         if (data) {
             res.status(200).send({
                 success: true,
@@ -13,7 +13,7 @@ const addAuthor = async (req, res) => {
         } else {
             res.status(401).send({
                 success: false,
-                message: 'Gagal membuat Author'
+                message: 'Failed to add author'
             })
         }
     } catch (error) {
@@ -27,5 +27,5 @@ const addAuthor = async (req, res) => {
 
 
 module.exports = {
-    addAuthor,
+    addAuthor
 }
