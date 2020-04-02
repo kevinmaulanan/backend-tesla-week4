@@ -25,6 +25,29 @@ const registerAuthentifikasi = async (req, res) => {
     }
 }
 
+const verifyUser = async (req, res) => {
+    try {
+        const { verifyCode } = req.body
+        const data = await processAuthentifikasi.verifyUser(verifyCode)
+        if (data) {
+            res.status(200).send({
+                success: true,
+                message: data
+            })
+        } else {
+            res.status(401).send({
+                success: false,
+                message: 'Kesalahan Query'
+            })
+        }
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 
 const loginAuthentikasi = async (req, res) => {
     try {
@@ -59,4 +82,5 @@ const loginAuthentikasi = async (req, res) => {
 module.exports = {
     registerAuthentifikasi,
     loginAuthentikasi,
+    verifyUser,
 }
