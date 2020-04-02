@@ -9,6 +9,6 @@ const db = mysql.createConnection({
     multipleStatements: true
 })
 
-db.connect()
+db.connect(() => console.log('Database connected'))
 
 module.exports = db

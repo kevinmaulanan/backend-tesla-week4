@@ -1,10 +1,12 @@
-const processAuthentifikasi = require('../../../models/post/authentikasi/authentikasi')
+const authModel = require('../../../models/Post/auth/auth')
 const jwt = require('jsonwebtoken')
 
-const registerAuthentifikasi = async (req, res) => {
+const register = async (req, res) => {
     try {
         const { username, password, email } = req.body
-        const data = await processAuthentifikasi.registerAuthentikasi(username, password, email)
+        console.log('register')
+        console.log(username, password, email)
+        const data = await authModel.register(username, password, email)
         if (data) {
             res.status(200).send({
                 success: true,
@@ -14,7 +16,7 @@ const registerAuthentifikasi = async (req, res) => {
         } else {
             res.status(401).send({
                 success: false,
-                message: 'Gagal membuat akun'
+                message: 'Failed to register'
             })
         }
     } catch (error) {
@@ -28,7 +30,7 @@ const registerAuthentifikasi = async (req, res) => {
 const verifyUser = async (req, res) => {
     try {
         const { verifyCode } = req.body
-        const data = await processAuthentifikasi.verifyUser(verifyCode)
+        const data = await authModel.verifyUser(verifyCode)
         if (data) {
             res.status(200).send({
                 success: true,
@@ -52,7 +54,7 @@ const verifyUser = async (req, res) => {
 const loginAuthentikasi = async (req, res) => {
     try {
         const { username, password } = req.body
-        const data = await processAuthentifikasi.loginAuthentikasi(username, password)
+        const data = await authModel.loginAuthentikasi(username, password)
         const getUser = { ...data }
         const token = jwt.sign(getUser, process.env.APP_KEY, null)
         if (data) {
@@ -80,7 +82,7 @@ const loginAuthentikasi = async (req, res) => {
 
 
 module.exports = {
-    registerAuthentifikasi,
+    register,
     loginAuthentikasi,
     verifyUser,
 }

@@ -2,7 +2,7 @@ const db = require('../../../config/db')
 const jwt = require('jsonwebtoken')
 const bcryptjs = require('bcryptjs')
 const uuid = require('uuid').v1
-const sendEmail = require('../../../uitility/sendEmail')
+const sendEmail = require('../../../utilities/sendEmail')
 
 
 module.exports = {
@@ -44,19 +44,20 @@ module.exports = {
         })
     },
 
-    registerAuthentikasi: (username, password, email) => {
+    register: (username, password, email) => {
+        console.log('register')
         return new Promise((resolve, reject) => {
             if (username === "" || password === "" || email === "") {
-                reject(new Error('Field Tidak Boleh Kosong'))
+                reject(new Error('Cannot empty. Please provide the required fields.'))
             } else {
                 db.query(`SELECT COUNT(*) as total FROM user_privates where username='${username}'`, (error, result) => {
                     const { total } = result[0]
                     if (total !== 0) {
-                        reject(new Error('Username sudah digunakan'))
+                        reject(new Error('Username is already used.'))
                     } else {
                         db.query(`INSERT INTO user_details (user_fullname) VALUES('${username}')`, (error, result) => {
                             if (error) {
-                                reject(new Error('Salah pada saat membuat query di users_detail'))
+                                reject(new Error('Wrong query in user detail.'))
                             } else {
                                 db.query(`select max(id) as id from user_details`, (error, result) => {
                                     const maxId = result[0].id
@@ -65,17 +66,14 @@ module.exports = {
                                     db.query(`INSERT INTO user_privates (username,password,email,verification_code, id_user_detail) VALUES('${username}','${encryptedPassword}','${email}', '${verify}', ${maxId})`, (error, result) => {
                                         if (error) {
                                             console.log('sini')
-                                            reject(new Error('Error database sistem'))
+                                            reject(new Error('Server error'))
                                         } else {
-
                                             sendEmail(email, verify).then((status) => {
-
                                                 return resolve(true)
                                             }).catch((error) => {
-
                                                 reject(error)
                                             })
-                                            const data = `Username : ${username} sudah dibuat. Silahkan check Email untuk verifikasi`
+                                            const data = `Username : ${username} is successfuly created. Please check your email to verify your account.`
                                             resolve(data)
                                         }
                                     })
