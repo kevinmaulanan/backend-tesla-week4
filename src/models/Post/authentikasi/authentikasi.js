@@ -2,6 +2,7 @@ const db = require('../../../config/db')
 const jwt = require('jsonwebtoken')
 const bcryptjs = require('bcryptjs')
 const uuid = require('uuid').v1
+const sendEmail = require('../../../uitility/sendEmail')
 
 
 module.exports = {
@@ -23,8 +24,16 @@ module.exports = {
                             if (comparePassword == false) {
                                 reject(new Error('Password Salah'))
                             } else {
-                                const data = result[0]
-                                resolve(data)
+                                db.query(`SELECT user_privates.id, user_details.user_fullname, user_details.user_image, user_privates.username, user_privates.email FROM user_privates JOIN user_details ON user_privates.id_user_detail = user_details.id WHERE username='${username}'`, (error, result) => {
+                                    if (error) {
+                                        console.log(error)
+                                        reject(new Error('Kesalahan query'))
+                                    } else {
+                                        const data = result[0]
+                                        resolve(data)
+                                    }
+                                })
+
 
                             }
                         }
@@ -58,7 +67,15 @@ module.exports = {
                                             console.log('sini')
                                             reject(new Error('Error database sistem'))
                                         } else {
-                                            const data = `Username : ${username} sudah dibuat`
+
+                                            sendEmail(email, verify).then((status) => {
+
+                                                return resolve(true)
+                                            }).catch((error) => {
+
+                                                reject(error)
+                                            })
+                                            const data = `Username : ${username} sudah dibuat. Silahkan check Email untuk verifikasi`
                                             resolve(data)
                                         }
                                     })
@@ -71,5 +88,28 @@ module.exports = {
             }
 
         })
+    },
+
+    verifyUser: (verifyCode) => {
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT COUNT(*) as total FROM user_privates where verification_code='${verifyCode}'`, (error, result) => {
+
+                const { total } = result[0]
+                if (total == 0) {
+                    reject(new Error('Code Verify Salah'))
+                } else {
+                    const newVerify = uuid()
+                    db.query(`UPDATE user_privates SET verification_code='${newVerify}' ,is_verified=1 WHERE verification_code='${verifyCode}'`, (error, result) => {
+                        if (error) {
+                            reject(new Error('Kesalahan Query'))
+                        } else {
+                            const data = 'Berhasil Verifikasi'
+                            resolve(data)
+                        }
+                    })
+                }
+            })
+        })
+
     }
 }
