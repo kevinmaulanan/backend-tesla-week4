@@ -16,7 +16,7 @@ module.exports = {
                 } else {
                     // Check is the user has verify his/her account
                     db.query(`SELECT * FROM user_privates WHERE username='${username}'`, (error, result) => {
-                        const isVerify = result[0].is_verify
+                        const isVerify = result[0].is_verified
                         if (isVerify === 0) {
                             console.log(error)
                             reject(new Error('Your username has not been verified. Please verify your account first.'))
@@ -107,6 +107,59 @@ module.exports = {
                             resolve(data)
                         }
                     })
+                }
+            })
+        })
+    },
+
+    forgotPasswordRequest: (username, email) => {
+        return new Promise((resolve, reject) => {
+            // Check is there any user with the provided username
+            db.query(`
+                SELECT user_privates.verification_code AS verificationCode 
+                FROM user_privates 
+                WHERE username = ${db.escape(username)};
+            `, (error, result) => {
+                if (error) reject(error)
+                else {
+                    const { verificationCode } = result[0]
+                    sendEmail(email, verificationCode).then((status) => {
+                        return resolve(true)
+                    }).catch((error) => {
+                        reject(error)
+                    })
+                }
+            })
+        })
+    },
+
+    forgotPasswordSuccess: (verificationCode, newPassword) => {
+        return new Promise((resolve, reject) => {
+            // Check is the verification code valid
+            db.query(`
+                SELECT COUNT(*) as total 
+                FROM user_privates 
+                WHERE verification_code=${db.escape(verificationCode)};
+            `, (error, result) => {
+                console.log(error)
+                if (error) reject(error)
+                else {
+                    const { total } = result[0]
+                    console.log('total', total)
+                    if (total == 0) {
+                        resolve(false)
+                    } else {
+                        const newVerify = uuid()
+                        const encryptedPassword = bcryptjs.hashSync(newPassword)
+                        db.query(`
+                            UPDATE user_privates 
+                            SET verification_code='${newVerify}', password = '${encryptedPassword}'
+                            WHERE verification_code=${db.escape(verificationCode)};
+                        `, (error, result) => {
+                            if (error) reject(error)
+                            else resolve(true)
+                        })
+                    }
                 }
             })
         })

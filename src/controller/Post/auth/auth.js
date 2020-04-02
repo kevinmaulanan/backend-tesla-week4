@@ -75,9 +75,80 @@ const login = async (req, res) => {
     }
 }
 
+const forgotPasswordRequest = async (req, res) => {
+    try {
+        const { username, email } = req.body
+        if (!username || !email) {
+            res.status(400).send({
+                success: false,
+                message: 'Please provide the required fields'
+            })
+        } else {
+            const canResetPassword = await authModel.forgotPasswordRequest(username, email)
+            if (canResetPassword) {
+                res.status(200).send({
+                    success: true,
+                    message: 'Verification code has been sent to your email'
+                })
+            } else {
+                res.status(500).send({
+                    success: false,
+                    message: 'Failed to reset password'
+                })
+            }
+        }
+    } catch (error) {
+        res.status(401).send({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+
+const forgotPasswordSuccess = async (req, res) => {
+    try {
+       const { verificationCode, newPassword, confirmPassword } = req.body
+       if (!newPassword || !confirmPassword) {
+           res.status(400).send({
+               success: false,
+               messsage: 'Please provide the required fields'
+           })
+       } else {
+           if (newPassword !== confirmPassword) {
+               res.status(400).send({
+                   success: false,
+                   message: 'New password and confirm password must match'
+               })
+           } else {
+            const canResetPassword = await authModel.forgotPasswordSuccess(verificationCode, newPassword)
+            if (!canResetPassword) {
+                res.status(400).send({
+                    success: false,
+                    message: 'Failed to reset password'
+                })
+            } else {
+                res.status(200).send({
+                    success: true,
+                    message: 'Reset password success'
+                })
+            }
+           }
+       }
+    } catch (error) {
+        res.status(401).send({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+
 
 module.exports = {
     register,
     login,
     verifyUser,
+    forgotPasswordRequest,
+    forgotPasswordSuccess
 }

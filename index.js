@@ -22,6 +22,11 @@ app.use(bodyParser.json())
 app.use('/uploads', express.static('uploads'))
 app.use(cors())
 
+// Root page handler
+app.get('/', (req, res) => {
+    res.status(200).send('Server is Running')
+})
+
 // Register base routes
 app.use('/auth', auth)
 app.use('/author', author)
@@ -30,9 +35,23 @@ app.use('/genre', genre)
 app.use('/review', review)
 app.use('/users', users)
 
-// Root page handler
-app.get('/', (req, res) => {
-    res.status(200).send('Server is Running')
+
+// Error handling
+app.use((req, res, next) => {
+    const error = new Error('Not Found')
+    error.status = 404
+    next(error)
+})
+  
+  
+// Catch the error
+app.use((error, req, res, next) => {
+    res.status(error.status || 500)
+    res.json({
+        error: {
+            message: error.message
+        }
+    })
 })
 
 
