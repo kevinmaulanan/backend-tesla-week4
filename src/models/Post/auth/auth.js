@@ -27,7 +27,7 @@ module.exports = {
                                 reject(new Error('Wrong username or password'))
                             } else {
                                 // Get user data
-                                db.query(`SELECT user_privates.id, user_details.user_fullname, user_details.user_image, user_privates.username, user_privates.email FROM user_privates JOIN user_details ON user_privates.id_user_detail = user_details.id WHERE username='${username}'`, (error, result) => {
+                                db.query(`SELECT user_privates.id, user_details.user_fullname, user_details.user_image, user_privates.username, user_privates.email, user_privates.id_user_detail FROM user_privates JOIN user_details ON user_privates.id_user_detail = user_details.id WHERE username='${username}'`, (error, result) => {
                                     if (error) {
                                         console.log(error)
                                         reject(new Error('Server error: Wrong query'))

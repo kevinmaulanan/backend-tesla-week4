@@ -12,7 +12,7 @@ const updateMyProfile = async (req, res) => {
         }
         req.body.images = '/uploads/' + req.file.filename
         const dataImage = req.body.images
-        const id = req.auth.id
+        const id = req.auth.id_user_detail
         const { fullname } = req.body
         const data = await processUsers.updateProfile(id, fullname, dataImage)
         console.log(data)
