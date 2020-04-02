@@ -27,7 +27,7 @@ const getBookById = async (req, res) => {
 }
 
 
-const getBookByGenreId = async (req, res) => {
+const getBooksByGenreId = async (req, res) => {
     try {
         const id = req.params.id
         const { data, total } = await books.getBooksByGenreId(id, req)
@@ -83,7 +83,6 @@ const getAllBooks = async (req, res) => {
     try {
         const { data, total } = await books.getAllBooks(req)
         const pagination = paginate(req, 'books/all', total)
-        console.log(pagination)
         if (data) {
             res.status(200).send({
                 success: true,
@@ -98,7 +97,6 @@ const getAllBooks = async (req, res) => {
             })
         }
     } catch (error) {
-        console.log(error)
         res.status(500).send({
             success: false,
             message: error.message
@@ -110,7 +108,7 @@ const getAllBooks = async (req, res) => {
 module.exports = {
     getAllBooks,
     getBookById,
-    getBookByGenreId,
+    getBooksByGenreId,
     getBooksByAuthorId,
 }
 

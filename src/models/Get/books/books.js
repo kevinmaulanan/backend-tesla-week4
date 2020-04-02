@@ -5,19 +5,16 @@ module.exports = {
 
     getAllBooks: (req) => {
         const { conditions, paginate } = paginationParams(req)
-        console.log(conditions)
         return new Promise((resolve, reject) => {
             db.query(`SELECT books.id, books.book_name, books.description, global_book_ratings.total_reviewers, global_book_ratings.avg_rating, authors.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id ${conditions} AND books.is_deleted=0`, (error, result) => {
                 const total = result !== undefined ? result.length : 0
                 if (error) {
-                    console.log(error)
                     reject(new Error('Server error: Failed to get all books'))
                 } else {
                     db.query(`SELECT books.id, books.book_name, books.description, global_book_ratings.total_reviewers, global_book_ratings.avg_rating, authors.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id ${conditions} AND books.is_deleted=0 ${paginate}`, (error, result) => {
                         if (error) {
                             reject(new Error('Server error: Failed to get all books'))
                         } else {
-                            console.log('result', result)
                             const data = result
                             resolve({ data, total })
                         }

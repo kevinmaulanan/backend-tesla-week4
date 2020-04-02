@@ -21,8 +21,6 @@ const paginationParams = (req) => {
 
     // Create sort parameters
     const sortKeys = Object.keys(params.sort)
-    console.log('sortKeys', sortKeys)
-    console.log('', params.sort)
     if (req.query.sort) {
         params.sort = sortKeys.map((v, i) => {
             return { key: sortKeys[i], value: req.query.sort[sortKeys[i]] }
@@ -48,17 +46,13 @@ const paginate = (req, route, total) => {
     const { params } = paginationParams(req)
 
     const totalPages = Math.ceil(total / parseInt(params.perPage))
-    console.log(totalPages)
 
     // Logic test for next page
     if (params.currentPage < totalPages) {
         const query = req.query
-        console.log(query)
         query.page = params.currentPage + 1;
         params.nextPage = process.env.APP_URL.concat(`${route}?${qs.stringify(query)}`)
 
-        console.log(query.page)
-        console.log(params.currentPage)
     } else {
         params.nextPage = null
     }
@@ -66,7 +60,6 @@ const paginate = (req, route, total) => {
     // Logic test for previous page
     if (params.currentPage > 1) {
         const query = req.query
-        console.log(query)
         query.page = params.currentPage - 1;
         params.previousPage = process.env.APP_URL.concat(`${route}?${qs.stringify(query)}`)
     } else {
