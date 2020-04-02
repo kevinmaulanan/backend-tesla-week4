@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 
 // Register base routes
 app.use('/auth', auth)
-app.use('/author', author)
+app.use('/authors', author)
 app.use('/books', books)
 app.use('/genre', genre)
 app.use('/list', list)
