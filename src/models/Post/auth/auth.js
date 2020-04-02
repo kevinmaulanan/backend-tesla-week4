@@ -8,7 +8,7 @@ const sendEmail = require('../../../utilities/sendEmail')
 module.exports = {
     login: (username, password) => {
         return new Promise((resolve, reject) => {
-            // Check is there any user with username provided
+            // Check is there any user with the provided username
             db.query(`SELECT COUNT(*) as total FROM user_privates WHERE username='${username}'`, (error, result) => {
                 const { total } = result[0]
                 if (total !== 1) {
@@ -47,9 +47,10 @@ module.exports = {
     register: (username, password, email) => {
         return new Promise((resolve, reject) => {
             // Check if the user has specified the required fields
-            if (username === "" || password === "" || email === "") {
+            if (!username || !password || !email) {
                 reject(new Error('Cannot empty. Please provide the required fields.'))
             } else {
+                console.log('in here')
                 // Check if the username is already used
                 db.query(`SELECT COUNT(*) as total FROM user_privates WHERE username='${username}'`, (error, result) => {
                     const { total } = result[0]
@@ -82,34 +83,32 @@ module.exports = {
                                 })
                             }
                         })
-
                     }
                 })
             }
-
         })
     },
 
-    verifyUser: (verifyCode) => {
+    verifyUser: (verificationCode) => {
         return new Promise((resolve, reject) => {
-            db.query(`SELECT COUNT(*) as total FROM user_privates where verification_code='${verifyCode}'`, (error, result) => {
-
+            // Check is there any user with the provided username
+            db.query(`SELECT COUNT(*) as total FROM user_privates WHERE verification_code='${verificationCode}'`, (error, result) => {
                 const { total } = result[0]
                 if (total == 0) {
-                    reject(new Error('Code Verify Salah'))
+                    reject(new Error('Wrong verification code'))
                 } else {
                     const newVerify = uuid()
-                    db.query(`UPDATE user_privates SET verification_code='${newVerify}' ,is_verified=1 WHERE verification_code='${verifyCode}'`, (error, result) => {
+                    // Update the verification code to be used in forgot password
+                    db.query(`UPDATE user_privates SET verification_code='${newVerify}' ,is_verified=1 WHERE verification_code='${verificationCode}'`, (error, result) => {
                         if (error) {
-                            reject(new Error('Kesalahan Query'))
+                            reject(new Error('Wrong query'))
                         } else {
-                            const data = 'Berhasil Verifikasi'
+                            const data = 'Verification success'
                             resolve(data)
                         }
                     })
                 }
             })
         })
-
     }
 }

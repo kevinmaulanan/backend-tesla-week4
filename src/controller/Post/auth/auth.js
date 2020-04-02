@@ -10,9 +10,8 @@ const register = async (req, res) => {
                 success: true,
                 message: data
             })
-
         } else {
-            res.status(401).send({
+            res.status(500).send({
                 success: false,
                 message: 'Failed to register account.'
             })
@@ -27,17 +26,17 @@ const register = async (req, res) => {
 
 const verifyUser = async (req, res) => {
     try {
-        const { verifyCode } = req.body
-        const data = await authModel.verifyUser(verifyCode)
+        const { verificationCode } = req.body
+        const data = await authModel.verifyUser(verificationCode)
         if (data) {
             res.status(200).send({
                 success: true,
                 message: data
             })
         } else {
-            res.status(401).send({
+            res.status(500).send({
                 success: false,
-                message: 'Kesalahan Query'
+                message: 'Server error'
             })
         }
     } catch (error) {
@@ -62,7 +61,6 @@ const login = async (req, res) => {
                 data: data,
                 token
             })
-
         } else {
             res.status(500).send({
                 success: false,
@@ -74,7 +72,6 @@ const login = async (req, res) => {
             success: false,
             message: error.message
         })
-
     }
 }
 
