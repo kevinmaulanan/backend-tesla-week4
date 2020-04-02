@@ -1,21 +1,20 @@
 const books = require('../../../models/get/books/books')
 const { paginate } = require('../../../pagination/pagination')
 
-const idBooks = async (req, res) => {
+const getBookById = async (req, res) => {
     try {
         const id = req.params.id
-        const dataidBooks = await books.getIdBooks(id)
-        console.log(dataidBooks)
-        if (dataidBooks) {
+        const bookData = await books.getBookById(id)
+        if (bookData) {
             res.status(200).send({
                 success: true,
-                message: 'berhasil',
-                data: dataidBooks
+                message: `Success to get book with id ${id}`,
+                data: bookData
             })
         } else {
-            res.status(401).send({
+            res.status(404).send({
                 success: false,
-                message: 'Ada kesalahan'
+                message: 'Not found'
             })
         }
     } catch (error) {
@@ -28,20 +27,20 @@ const idBooks = async (req, res) => {
 }
 
 
-const idGenreBooks = async (req, res) => {
+const getBookByGenreId = async (req, res) => {
     try {
         const id = req.params.id
-        const dataidGenre = await books.getIdGenreBooks(id)
-        if (dataidGenre) {
+        const booksData = await books.getBooksByGenreId(id)
+        if (booksData) {
             res.status(200).send({
                 success: true,
-                message: 'berhasil',
-                data: dataidGenre
+                message: 'Success to get books by genre',
+                data: booksData
             })
         } else {
-            res.status(401).send({
+            res.status(404).send({
                 success: false,
-                message: 'Ada kesalahan'
+                message: 'Not found'
             })
         }
     } catch (error) {
@@ -52,20 +51,20 @@ const idGenreBooks = async (req, res) => {
     }
 }
 
-const idAuthorBooks = async (req, res) => {
+const getBooksByAuthorId = async (req, res) => {
     try {
-        const idAuthor = req.params.id
-        const dataidGenre = await books.getIdAuthorBooks(idAuthor)
-        if (dataidGenre) {
+        const authorId = req.params.id
+        const booksData = await books.getBooksByAuthorId(authorId)
+        if (booksData) {
             res.status(200).send({
                 success: true,
-                message: 'berhasil',
-                data: dataidGenre
+                message: 'Success to get books by author id',
+                data: booksData
             })
         } else {
-            res.status(401).send({
+            res.status(404).send({
                 success: false,
-                message: 'Ada kesalahan'
+                message: 'Not found'
             })
         }
     } catch (error) {
@@ -76,7 +75,7 @@ const idAuthorBooks = async (req, res) => {
     }
 }
 
-const allBooks = async (req, res) => {
+const getAllBooks = async (req, res) => {
     try {
         const { data, total } = await books.getAllBooks(req)
         const pagination = paginate(req, 'books', total)
@@ -84,14 +83,14 @@ const allBooks = async (req, res) => {
         if (data) {
             res.status(200).send({
                 success: true,
-                message: 'berhasil dibuat',
+                message: 'Success to get all books',
                 data,
                 pagination,
             })
         } else {
-            res.status(401).send({
+            res.status(404).send({
                 success: false,
-                message: 'Ada kesalahan'
+                message: 'Not found'
             })
         }
     } catch (error) {
@@ -105,10 +104,10 @@ const allBooks = async (req, res) => {
 
 
 module.exports = {
-    allBooks,
-    idBooks,
-    idGenreBooks,
-    idAuthorBooks,
+    getAllBooks,
+    getBookById,
+    getBookByGenreId,
+    getBooksByAuthorId,
 }
 
 
