@@ -30,12 +30,15 @@ const getBookById = async (req, res) => {
 const getBookByGenreId = async (req, res) => {
     try {
         const id = req.params.id
-        const booksData = await books.getBooksByGenreId(id)
-        if (booksData) {
+        const { data, total } = await books.getBooksByGenreId(id, req)
+        console.log('total', total)
+        const pagination = paginate(req, `books/genre/${id}`, total)
+        if (data) {
             res.status(200).send({
                 success: true,
                 message: 'Success to get books by genre',
-                data: booksData
+                data,
+                pagination
             })
         } else {
             res.status(404).send({
