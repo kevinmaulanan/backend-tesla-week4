@@ -78,7 +78,7 @@ const getBooksByAuthorId = async (req, res) => {
 const getAllBooks = async (req, res) => {
     try {
         const { data, total } = await books.getAllBooks(req)
-        const pagination = paginate(req, 'books', total)
+        const pagination = paginate(req, 'books/all', total)
         console.log(pagination)
         if (data) {
             res.status(200).send({
