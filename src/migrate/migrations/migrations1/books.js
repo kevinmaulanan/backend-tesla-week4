@@ -4,7 +4,7 @@ db.query(
     `CREATE TABLE books (
       id INT PRIMARY KEY AUTO_INCREMENT,
       book_name VARCHAR(128),
-      description TEXT,
+      description LONGTEXT,
       book_image VARCHAR(256),
       id_author INT,
       id_global_rating INT,
