@@ -1,4 +1,4 @@
-const authModel = require('../../../models/Post/auth/auth')
+const authModel = require('../../../models/post/auth/auth')
 const jwt = require('jsonwebtoken')
 
 const register = async (req, res) => {
