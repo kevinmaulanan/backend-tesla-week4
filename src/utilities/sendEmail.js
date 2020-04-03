@@ -1,7 +1,11 @@
 const nodeMailer = require('nodemailer')
+const hbs = require('nodemailer-express-handlebars')
+
 require('dotenv').config()
 
-const transporter = nodeMailer.createTransport({
+
+
+let transporter = nodeMailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.USER_EMAIL,
@@ -9,25 +13,37 @@ const transporter = nodeMailer.createTransport({
     }
 })
 
-const mailOptions = (to, codeVerify) => ({
+const handlebarOptions = {
+    viewEngine: {
+        extName: '.handlebars',
+        partialsDir: './src/utilities/views',
+        layoutsDir: './src/utilities/views',
+        defaultLayout: 'index.handlebars',
+    },
+    viewPath: './src/utilities/views',
+    extName: '.handlebars',
+};
+
+transporter.use('compile', hbs(handlebarOptions))
+
+
+
+let mailOptions = (to, codeVerify) => ({
     from: process.env.USER_EMAIL,
     to: to,
     subject: 'Verify Your Account',
-    html: 
-    `
-        <h2>Hi... How is your day? Hope it goes awesome</h2>
-        <h3>This is Code to Verify Your Account</h3>
-        <strong>${codeVerify}</strong>
-        <h3>Please verify your account before proceed to login.</h3>
-        <h3>Thank you and please enjoy our app.</h3>
-    `
+    template: 'index',
+    context: {
+        codeVerify: `${codeVerify}`
+    }
+
 })
 
 const SendingEmail = (to, codeVerify) => {
     return new Promise((resolve, reject) => {
         transporter.sendMail(mailOptions(to, codeVerify), (err, info) => {
             if (err) {
-                console.log(err)
+                console.log('woi', err)
                 reject(err)
             } else {
                 console.log(info)

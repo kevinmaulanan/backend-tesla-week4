@@ -6,7 +6,8 @@ module.exports = {
     getAllBooks: (req) => {
         const { conditions, paginate } = paginationParams(req)
         return new Promise((resolve, reject) => {
-            db.query(`SELECT COUNT(*) AS total FROM books ${conditions} `, (error, result) => {
+            db.query(`SELECT COUNT(*) AS total FROM books JOIN authors ON books.id_author=authors.id JOIN bridge_books_genres ON books.id= bridge_books_genres.id_book JOIN genres ON bridge_books_genres.id_genre=genres.id JOIN lists ON books.id=lists.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id ${conditions} `, (error, result) => {
+                console.log(error)
                 const { total } = result[0]
                 if (error) {
                     reject(new Error('Server error: Failed to get all books'))
@@ -75,6 +76,7 @@ module.exports = {
 
     getBooksByAuthorId: (authorId) => {
         return new Promise((resolve, reject) => {
+            console.log(authorId)
             db.query(`SELECT COUNT(*) as total from books where id_author=${authorId}`, (error, result) => {
                 const { total } = result[0]
                 if (total < 1) {
@@ -85,6 +87,8 @@ module.exports = {
                         if (error) {
                             reject(new Error(`Server error: Failed to get books by author`))
                         } else {
+
+                            console.log(result)
                             const data = result
                             resolve(data)
                         }

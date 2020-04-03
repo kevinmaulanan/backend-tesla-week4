@@ -55,6 +55,7 @@ const getBooksByAuthorId = async (req, res) => {
     try {
         const authorId = req.params.id
         const booksData = await books.getBooksByAuthorId(authorId)
+        console.log(booksData)
         if (booksData) {
             res.status(200).send({
                 success: true,

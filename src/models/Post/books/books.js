@@ -7,7 +7,6 @@ module.exports = {
             console.log(idAuthor)
             db.query(`SELECT COUNT(*) as total FROM authors where id=${idAuthor}`, (error, result) => {
                 const { total } = result[0]
-                console.log('total', total)
                 if (total < 1) {
                     reject(new Error('Tidak ada Author'))
                 } else {

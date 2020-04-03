@@ -15,6 +15,7 @@ module.exports = {
                         } else {
                             db.query(`SELECT COUNT(*) as total FROM book_ratings_by_user where id_book=${idBook} && id_user=${idUserLogin}`, (error, result) => {
                                 const { total } = result[0]
+                                console.log(total)
                                 if (total !== 0) {
                                     reject(new Error('Anda sudah memberi rating di buku ini'))
                                 } else {
