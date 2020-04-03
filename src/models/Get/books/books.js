@@ -46,12 +46,12 @@ module.exports = {
                                     FROM bridge_books_genres
                                     WHERE bridge_books_genres.id_book = ${db.escape(id)}
                                 );`, (error, result) => {
-                                    if (error) reject(error)
-                                    else resolve({
-                                        ...data,
-                                        genres: result.map(item => item.genre_name)
-                                    })
+                                if (error) reject(error)
+                                else resolve({
+                                    ...data,
+                                    genres: result.map(item => item.genre_name)
                                 })
+                            })
                         }
                     })
                 }
@@ -100,6 +100,8 @@ module.exports = {
                             console.log(error)
                             reject(new Error(`Server error: Failed to get books by author`))
                         } else {
+
+                            console.log(result)
                             const data = result
                             resolve({ data, total })
                         }
