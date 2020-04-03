@@ -8,7 +8,7 @@ db.query(
       book_image VARCHAR(256),
       id_author INT,
       id_global_rating INT,
-      is_deleted TINYINT 0,
+      is_deleted TINYINT DEFAULT 0,
       FOREIGN KEY (id_author) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE CASCADE,
       FOREIGN KEY (id_global_rating) REFERENCES global_book_ratings(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,
