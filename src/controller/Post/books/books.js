@@ -1,10 +1,10 @@
-const books = require('../../../models/Post/books/books')
+const books = require('../../../models/post/books/books')
 
 
 const postBooks = async (req, res) => {
     try {
-        const { nameBook, descriptionBook, idAuthor, idList } = req.body
-        const dataPostBooks = await books.postBooks(nameBook, descriptionBook, idAuthor, idList)
+        const { nameBook, descriptionBook, imageBook, idAuthor, totalReviews, avgRating } = req.body
+        const dataPostBooks = await books.postBooks(nameBook, descriptionBook, imageBook, idAuthor, totalReviews, avgRating)
         if (dataPostBooks) {
             res.status(200).send({
                 success: true,

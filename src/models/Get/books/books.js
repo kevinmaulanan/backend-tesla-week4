@@ -1,58 +1,81 @@
 const db = require('../../../config/db')
+const { paginationParams } = require('../../../pagination/pagination')
 
 module.exports = {
 
-    getAllBooks: () => {
+    getAllBooks: (req) => {
+        const { conditions, paginate } = paginationParams(req)
         return new Promise((resolve, reject) => {
-            db.query(`SELECT books.id, books.name_book, list.name_list, books.description_book, genre.name_genre, author.name_author FROM books JOIN author ON books.id_author=author.id JOIN bridge_books_genre ON books.id= bridge_books_genre.id_books JOIN genre ON bridge_books_genre.id_genre=genre.id JOIN list ON books.id_list=list.id where books.on_delete=0 `, (error, result) => {
+            db.query(`SELECT books.id, books.book_name, books.description, global_book_ratings.total_reviewers, global_book_ratings.avg_rating, authors.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id ${conditions} AND books.is_deleted=0`, (error, result) => {
+                const total = result !== undefined ? result.length : 0
                 if (error) {
-                    reject(error)
+                    reject(new Error('Server error: Failed to get all books'))
                 } else {
-                    const data = result
-                    resolve(data)
+                    db.query(`SELECT books.id, books.book_name, books.description, global_book_ratings.total_reviewers, global_book_ratings.avg_rating, authors.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id ${conditions} AND books.is_deleted=0 ${paginate}`, (error, result) => {
+                        if (error) {
+                            reject(new Error('Server error: Failed to get all books'))
+                        } else {
+                            const data = result
+                            resolve({ data, total })
+                        }
+                    })
                 }
             })
+
         })
     },
 
 
-    getIdBooks: (id) => {
+    getBookById: (id) => {
         return new Promise((resolve, reject) => {
-            db.query(`SELECT COUNT(*) as total from books where id=${id}`, (error, result) => {
+            db.query(`SELECT COUNT(*) AS total FROM books WHERE id=${id}`, (error, result) => {
                 const { total } = result[0]
                 if (total < 1) {
-                    reject(new Error(`ID : ${id} tidak ditemukan `))
+                    reject(new Error(`ID : ${id} is not found `))
                 } else {
-                    db.query(`SELECT books.id, books.name_book, list.name_list, books.description_book, genre.name_genre, author.name_author FROM books JOIN author ON books.id_author=author.id JOIN bridge_books_genre ON books.id= bridge_books_genre.id_books JOIN genre ON bridge_books_genre.id_genre=genre.id JOIN list ON books.id_list=list.id where books.id=${id} && books.on_delete=0 `, (error, result) => {
+                    db.query(`SELECT books.id, books.book_name, books.description, global_book_ratings.total_reviewers, global_book_ratings.avg_rating, authors.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id WHERE books.id=${id} AND books.is_deleted=0 `, (error, result) => {
+                        if (error) {
+                            reject(error)
+                        } else {
+                            const data = result[0]
+                            db.query(`
+                                SELECT genres.genre_name 
+                                FROM genres 
+                                WHERE genres.id IN (
+                                    SELECT bridge_books_genres.id_genre
+                                    FROM bridge_books_genres
+                                    WHERE bridge_books_genres.id_book = ${db.escape(id)}
+                                );`, (error, result) => {
+                                    if (error) reject(error)
+                                    else resolve({
+                                        ...data,
+                                        genres: result.map(item => item.genre_name)
+                                    })
+                                })
+                        }
+                    })
+                }
+            })
+
+        })
+    },
+
+    getBooksByGenreId: (id, req) => {
+        const { conditions, paginate } = paginationParams(req)
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT books.id, books.book_name, books.description, global_book_ratings.total_reviewers, global_book_ratings.avg_rating, genres.genre_name, authors.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN bridge_books_genres ON books.id= bridge_books_genres.id_book JOIN genres ON bridge_books_genres.id_genre=genres.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id ${conditions} AND genres.id=${id} && books.is_deleted=0`, (error, result) => {
+                if (error) reject(error)
+                const total = result.length
+                if (total < 1) {
+                    reject(new Error(`ID Genre : ${id} is not found `))
+                }
+                else {
+                    db.query(`SELECT books.id, books.book_name, books.description, global_book_ratings.total_reviewers, global_book_ratings.avg_rating, genres.genre_name, authors.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN bridge_books_genres ON books.id= bridge_books_genres.id_book JOIN genres ON bridge_books_genres.id_genre=genres.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id ${conditions} AND genres.id=${id} && books.is_deleted=0 ${paginate}`, (error, result) => {
                         if (error) {
                             reject(error)
                         } else {
                             const data = result
-                            resolve(data)
-                        }
-                    })
-                }
-            })
-
-        })
-    },
-
-    getIdGenreBooks: (id) => {
-        return new Promise((resolve, reject) => {
-            db.query(`SELECT COUNT(*) as total from bridge_books_genre where id_genre=${id}`, (error, result) => {
-                const { total } = result[0]
-                if (total < 1) {
-                    reject(new Error(`ID Genre : ${id} tidak ditemukan `))
-                }
-                else {
-                    db.query(`SELECT books.id, books.name_book, list.name_list, books.description_book, genre.name_genre, author.name_author FROM books JOIN author ON books.id_author=author.id JOIN bridge_books_genre ON books.id= bridge_books_genre.id_books JOIN genre ON bridge_books_genre.id_genre=genre.id JOIN list ON books.id_list=list.id where genre.id=${id} && books.on_delete=0 `, (error, result) => {
-                        if (error) {
-                            reject(error)
-                        } else {
-
-                            const data = result
-                            console.log('data', data)
-                            resolve(data)
+                            resolve({ data, total })
                         }
                     })
                 }
@@ -62,25 +85,27 @@ module.exports = {
     },
 
 
-    getIdAuthorBooks: (idAuthor) => {
+    getBooksByAuthorId: (authorId, req) => {
+        const { conditions, paginate } = paginationParams(req)
         return new Promise((resolve, reject) => {
-            db.query(`SELECT COUNT(*) as total from books where id_author=${idAuthor}`, (error, result) => {
-                const { total } = result[0]
+            db.query(`SELECT books.id, books.book_name, books.description, global_book_ratings.total_reviewers, global_book_ratings.avg_rating, authors.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id ${conditions} AND authors.id=${authorId} && books.is_deleted=0 `, (error, result) => {
+                if (error) reject(error)
+                const total = result.length
                 if (total < 1) {
-                    reject(new Error(`Author dengan id: ${idAuthor} tidak ditemukan `))
+                    reject(new Error(`Author with id ${authorId} is not found`))
                 }
                 else {
-                    db.query(`SELECT books.id, books.name_book, list.name_list, books.description_book, genre.name_genre, author.name_author FROM books JOIN author ON books.id_author=author.id JOIN bridge_books_genre ON books.id= bridge_books_genre.id_books JOIN genre ON bridge_books_genre.id_genre=genre.id JOIN list ON books.id_list=list.id where books.id_author=${idAuthor} && books.on_delete=0 `, (error, result) => {
+                    db.query(`SELECT books.id, books.book_name, books.description, global_book_ratings.total_reviewers, global_book_ratings.avg_rating, authors.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id ${conditions} AND authors.id=${authorId} && books.is_deleted=0 ${paginate}`, (error, result) => {
                         if (error) {
-                            reject(new Error(`Query False`))
+                            console.log(error)
+                            reject(new Error(`Server error: Failed to get books by author`))
                         } else {
                             const data = result
-                            resolve(data)
+                            resolve({ data, total })
                         }
                     })
                 }
             })
-
         })
     },
 }

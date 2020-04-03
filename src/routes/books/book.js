@@ -1,14 +1,16 @@
 const books = require('express').Router()
-const { allBooks, idBooks, idGenreBooks, idAuthorBooks } = require('../../controller/Get/Books/books')
-const { postBooks, postGenreBooks } = require('../../controller/Post/books/books')
+const { getAllBooks, getBookById, getBooksByGenreId, getBooksByAuthorId } = require('../../controller/get/books/books')
+const { postBooks, postGenreBooks } = require('../../controller/post/books/books')
 
+// Post method
 books.post('/', postBooks)
 books.post('/genre', postGenreBooks)
 
-books.get('/all', allBooks)
-books.get('/book/:id', idBooks)
-books.get('/genre/:id', idGenreBooks)
-books.get('/author/:id', idAuthorBooks)
+// Get method
+books.get('/all', getAllBooks)
+books.get('/book/:id', getBookById)
+books.get('/genre/:id', getBooksByGenreId)
+books.get('/author/:id', getBooksByAuthorId)
 
 
 module.exports = {
