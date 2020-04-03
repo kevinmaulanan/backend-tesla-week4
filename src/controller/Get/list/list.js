@@ -10,9 +10,9 @@ const getListByIdUserLogin = async (req, res) => {
                 message: data
             })
         } else {
-            res.status(401).send({
+            res.status(404).send({
                 success: false,
-                message: 'Ada kesalahan pada Sistem'
+                message: 'Not found'
             })
         }
     } catch (error) {

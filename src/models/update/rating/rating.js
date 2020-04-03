@@ -28,9 +28,12 @@ module.exports = {
                                                 } else {
                                                     totalReviews = result[0].total_reviewers
                                                     avgRating = result[0].avg_rating
-                                                    const hasilAvgRating = (((totalReviews * avgRating) + (ratingUserPast - rating)) / totalReviews)
+                                                    const hasilAvgRating = ((((totalReviews * avgRating) - ratingUserPast) + rating) / totalReviews)
                                                     console.log(hasilAvgRating)
-                                                    db.query(`UPDATE global_book_ratings SET total_reviewers=${totalReviewsNow}, avg_rating=${hasilAvgRating}  WHERE id=${idBook} `, (error, result) => {
+                                                    console.log(rating)
+                                                    console.log(ratingUserPast)
+
+                                                    db.query(`UPDATE global_book_ratings SET avg_rating=${hasilAvgRating}  WHERE id=${idBook} `, (error, result) => {
                                                         if (error) {
                                                             console.log(error)
                                                             reject(new Error('Kesalahan pada Query'))

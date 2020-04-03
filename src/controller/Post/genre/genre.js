@@ -10,7 +10,7 @@ const postGenre = async (req, res) => {
                 message: dataPostGenre,
             })
         } else {
-            res.status(401).send({
+            res.status(404).send({
                 success: false,
                 message: 'Ada kesalahan'
             })

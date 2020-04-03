@@ -11,9 +11,9 @@ const getMyProfile = async (req, res) => {
                 data: data
             })
         } else {
-            res.status(401).send({
+            res.status(404).send({
                 success: false,
-                message: 'Kesalahan pada saat menginput data'
+                message: 'Not found'
             })
         }
     } catch (error) {
