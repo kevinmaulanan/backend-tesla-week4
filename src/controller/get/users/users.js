@@ -53,11 +53,6 @@ const getMyFavoriteBook = async (req, res) => {
 
 
 module.exports = {
-<<<<<<< HEAD:src/controller/Get/users/users.js
     getMyProfile,
     getMyFavoriteBook
 }
-=======
-    getMyProfile
-}
->>>>>>> d931a0c3964ba460dc76f959e66057e0cfc4659a:src/controller/get/users/users.js
