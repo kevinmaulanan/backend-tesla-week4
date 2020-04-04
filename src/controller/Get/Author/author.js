@@ -1,14 +1,17 @@
 const processAuthors = require('../../../models/get/author/author')
+const { paginate } = require('../../../pagination/pagination')
 
 
 const getAllAuthors = async (req, res) => {
     try {
-        const dataAllAuthor = await processAuthors.getAllAuthors()
-        if (dataAllAuthor) {
+        const { data, total } = await processAuthors.getAllAuthors(req)
+        const pagination = paginate(req, 'authors', total)
+        if (data) {
             res.status(200).send({
                 success: true,
                 message: 'Success to get all authors',
-                data: dataAllAuthor
+                data: data,
+                pagination
             })
         } else {
             res.status(500).send({

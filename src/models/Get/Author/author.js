@@ -1,8 +1,9 @@
 const db = require('../../../config/db')
+const { paginationParams } = require('../../../pagination/pagination')
 
 module.exports = {
     getAuthorById: (id) => {
-        console.log(id)
+
         return new Promise((resolve, reject) => {
             db.query(`SELECT COUNT(*) AS total FROM authors WHERE id= ${id}`, (error, result) => {
                 const { total } = result[0]
@@ -23,16 +24,31 @@ module.exports = {
     },
 
 
-    getAllAuthors: () => {
+    getAllAuthors: (req) => {
+        console.log('hm')
         return new Promise((resolve, reject) => {
-            db.query(`SELECT * FROM authors`, (error, result) => {
+            const { paginate, conditions } = paginationParams(req)
+            db.query(`SELECT COUNT(*) as total FROM authors ${conditions}`, (error, result) => {
+                const { total } = result[0]
+                console.log(total)
                 if (error) {
-                    reject(new error('Server error: Failed to get all authors'))
+                    console.log(error)
+                    reject(new Error('Server error: Failed to get all authors'))
                 } else {
-                    const data = result
-                    resolve({ data })
+                    db.query(`SELECT * FROM authors ${conditions}${paginate}`, (error, result) => {
+                        if (error) {
+                            console.log(error)
+                            reject(new error('Server error: Failed to get all authors'))
+                        } else {
+                            const data = result
+                            console.log(data)
+                            console.log(total)
+                            resolve({ data, total })
+                        }
+                    })
                 }
             })
+
         })
     },
 }
