@@ -3,11 +3,14 @@ const processList = require('../../../models/get/list/list')
 const getListByIdUserLogin = async (req, res) => {
     try {
         const idUserLogin = req.auth.id_user_detail
-        const data = await processList.getListByIdUserLogin(idUserLogin)
-        if (data) {
+        const { idBook } = req.body
+        console.log(idBook, 'IdBook')
+        const dataList = await processList.getListByIdUserLogin(idUserLogin, idBook)
+        if (dataList) {
             res.status(200).send({
                 success: true,
-                message: data
+                message: 'Berhasil',
+                dataList
             })
         } else {
             res.status(404).send({

@@ -21,5 +21,28 @@ module.exports = {
                 }
             })
         })
+    },
+
+    getMyFavoriteBook: (idUser) => {
+        return new Promise((resolve, reject) => {
+
+            db.query(`SELECT COUNT(*) as total FROM books_favorite_by_user WHERE id_user=${idUser}`, (error, result) => {
+                const { total } = result[0]
+                if (total === 0) {
+                    reject(new Error('Tidak ada Buku Favorite'))
+                } else {
+                    db.query(`SELECT books_favorite_by_user.id, books.book_name, books.description, books.book_image FROM books_favorite_by_user JOIN books ON books_favorite_by_user.id_book = books.id JOIN user_details ON books_favorite_by_user.id_user = user_details.id WHERE books_favorite_by_user.id_user=${idUser}`, (error, result) => {
+                        if (error) {
+                            console.log(error)
+                            reject(new Error('Error Query Database'))
+                        } else {
+                            const data = result
+                            resolve(data)
+                        }
+                    })
+                }
+            })
+        })
+
     }
 }

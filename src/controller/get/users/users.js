@@ -24,10 +24,40 @@ const getMyProfile = async (req, res) => {
     }
 }
 
+const getMyFavoriteBook = async (req, res) => {
+    try {
+        const idUser = req.auth.id_user_detail
+        const data = await processUsers.getMyFavoriteBook(idUser)
+        console.log(data)
+        if (data) {
+            res.status(200).send({
+                success: true,
+                message: 'Buku Favorite berhasil ditampilkan',
+                data: data
+            })
+        } else {
+            res.status(404).send({
+                success: false,
+                message: 'Not Found'
+            })
+        }
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: error.message
+        })
+    }
+}
 
 
 
 
 module.exports = {
+<<<<<<< HEAD:src/controller/Get/users/users.js
+    getMyProfile,
+    getMyFavoriteBook
+}
+=======
     getMyProfile
 }
+>>>>>>> d931a0c3964ba460dc76f959e66057e0cfc4659a:src/controller/get/users/users.js
