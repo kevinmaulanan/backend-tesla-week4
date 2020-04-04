@@ -4,7 +4,7 @@ const { getMyProfile, getMyFavoriteBook } = require('../../controller/get/users/
 const { addFavoriteBook } = require('../../controller/post/user/user')
 const { updateMyProfile } = require('../../controller/update/users/users')
 const { deleteMyFavoriteBook } = require('../../controller/delete/user/user')
-const { checkAuthToken } = require('../../Middleware/auth/auth')
+const { checkAuthToken } = require('../../middleware/auth/auth')
 
 
 users.delete('/my-favorite-book', checkAuthToken, deleteMyFavoriteBook)
