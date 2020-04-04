@@ -50,41 +50,47 @@ module.exports = {
             if (!username || !password || !email) {
                 reject(new Error('Cannot empty. Please provide the required fields.'))
             } else {
-                console.log('in here')
-                // Check if the username is already used
-                db.query(`SELECT COUNT(*) as total FROM user_privates WHERE username='${username}'`, (error, result) => {
-                    const { total } = result[0]
-                    if (total !== 0) {
-                        reject(new Error('Username is already used.'))
-                    } else {
-                        // Insert user data to user_details table
-                        db.query(`INSERT INTO user_details (user_fullname) VALUES('${username}')`, (error, result) => {
-                            if (error) {
-                                reject(new Error('Wrong query in user detail.'))
-                            } else {
-                                db.query(`SELECT max(id) AS id FROM user_details`, (error, result) => {
-                                    const maxId = result[0].id
-                                    const encryptedPassword = bcryptjs.hashSync(password)
-                                    const verify = uuid()
-                                    // Insert user data to user_privates table
-                                    db.query(`INSERT INTO user_privates (username,password,email,verification_code, id_user_detail) VALUES('${username}','${encryptedPassword}','${email}', '${verify}', ${maxId})`, (error, result) => {
-                                        if (error) {
-                                            reject(new Error('Server error'))
-                                        } else {
-                                            sendEmail(email, verify).then((status) => {
-                                                return resolve(true)
-                                            }).catch((error) => {
-                                                reject(error)
-                                            })
-                                            const data = `Username : ${username} is successfuly created. Please check your email to verify your account.`
-                                            resolve(data)
-                                        }
+                // Check if the user has specified the required fields
+                var regex = /^[a-zA-Z0-9]{8,24}$/
+                if (regex.test(username) === false || regex.test(password) === false) {
+                    reject(new Error('Input username or password must be more than 8 characters'))
+                } else {
+                    console.log('in here')
+                    // Check if the username is already used
+                    db.query(`SELECT COUNT(*) as total FROM user_privates WHERE username='${username}'`, (error, result) => {
+                        const { total } = result[0]
+                        if (total !== 0) {
+                            reject(new Error('Username is already used.'))
+                        } else {
+                            // Insert user data to user_details table
+                            db.query(`INSERT INTO user_details (user_fullname) VALUES('${username}')`, (error, result) => {
+                                if (error) {
+                                    reject(new Error('Wrong query in user detail.'))
+                                } else {
+                                    db.query(`SELECT max(id) AS id FROM user_details`, (error, result) => {
+                                        const maxId = result[0].id
+                                        const encryptedPassword = bcryptjs.hashSync(password)
+                                        const verify = uuid()
+                                        // Insert user data to user_privates table
+                                        db.query(`INSERT INTO user_privates (username,password,email,verification_code, id_user_detail) VALUES('${username}','${encryptedPassword}','${email}', '${verify}', ${maxId})`, (error, result) => {
+                                            if (error) {
+                                                reject(new Error('Server error'))
+                                            } else {
+                                                sendEmail(email, verify).then((status) => {
+                                                    return resolve(true)
+                                                }).catch((error) => {
+                                                    reject(error)
+                                                })
+                                                const data = `Username : ${username} is successfuly created. Please check your email to verify your account.`
+                                                resolve(data)
+                                            }
+                                        })
                                     })
-                                })
-                            }
-                        })
-                    }
-                })
+                                }
+                            })
+                        }
+                    })
+                }
             }
         })
     },

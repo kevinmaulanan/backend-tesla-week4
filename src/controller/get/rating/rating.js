@@ -1,21 +1,22 @@
-const processList = require('../../../models/get/list/list')
+const processRating = require('../../../models/get/rating/rating')
 
-const getListByIdUserLogin = async (req, res) => {
+
+
+const getRatingsByIdUser = async (req, res) => {
     try {
-        const idUserLogin = req.auth.id_user_detail
+        const idUser = req.auth.id_user_detail
         const { idBook } = req.body
-        console.log(idBook, 'IdBook')
-        const dataList = await processList.getListByIdUserLogin(idUserLogin, idBook)
-        if (dataList) {
+        const data = await processRating.getMyRatingByIdBook(idUser, idBook)
+        if (data) {
             res.status(200).send({
                 success: true,
                 message: 'Berhasil',
-                dataList
+                data,
             })
         } else {
             res.status(404).send({
                 success: false,
-                message: 'Not found'
+                message: 'Not Found'
             })
         }
     } catch (error) {
@@ -24,8 +25,10 @@ const getListByIdUserLogin = async (req, res) => {
             message: error.message
         })
     }
+
 }
 
+
 module.exports = {
-    getListByIdUserLogin
+    getRatingsByIdUser
 }
