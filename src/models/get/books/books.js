@@ -61,12 +61,12 @@ module.exports = {
     },
 
     getBooksByList: (req, nameList) => {
-        const { paginate } = paginationParams(req)
+        console.log(nameList)
+        const { paginate, conditions } = paginationParams(req)
         return new Promise((resolve, reject) => {
             db.query(`SELECT COUNT(*) as total FROM lists WHERE list_name='${nameList}' `, (error, result) => {
-
-                const { total } = result
-                console.log(total)
+                console.log(result)
+                const { total } = result[0]
                 if (total < 1 || total == undefined) {
                     reject(new Error(`Name List : ${nameList} is not found `))
                 }
