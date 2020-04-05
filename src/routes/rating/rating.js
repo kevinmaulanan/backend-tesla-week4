@@ -6,7 +6,7 @@ const { updateRating } = require('../../controller/update/rating/rating')
 const { checkAuthToken } = require('../../middleware/auth/auth')
 
 rating.post('/', checkAuthToken, getRatingsByIdUser)
-rating.post('/', checkAuthToken, addRating)
+rating.post('/add', checkAuthToken, addRating)
 rating.patch('/', checkAuthToken, updateRating)
 module.exports = {
     rating

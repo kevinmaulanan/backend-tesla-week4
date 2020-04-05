@@ -10,7 +10,7 @@ list.delete('/', checkAuthToken, deleteList)
 list.post('/', checkAuthToken, getListByIdUserLogin)
 list.get('/list', checkAuthToken, getAllList)
 list.get('/all', checkAuthToken, getAllListByIdUserLogin)
-list.post('/', checkAuthToken, addList)
+list.post('/add', checkAuthToken, addList)
 
 module.exports = {
     list
