@@ -99,6 +99,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             // Check is there any user with the provided username
             db.query(`SELECT COUNT(*) as total FROM user_privates WHERE verification_code='${verificationCode}'`, (error, result) => {
+                console.log(error)
                 const { total } = result[0]
                 if (total == 0) {
                     reject(new Error('Wrong verification code'))
