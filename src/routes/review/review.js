@@ -9,7 +9,7 @@ const { updateReview } = require('../../controller/update/review/review')
 const { checkAuthToken } = require('../../middleware/auth/auth')
 
 review.delete('/', checkAuthToken, deleteMyReview)
-review.get('/', checkAuthToken, getAllReviewsByIdBook)
+review.post('/', checkAuthToken, getAllReviewsByIdBook)
 review.patch('/', checkAuthToken, updateReview)
 review.post('/', checkAuthToken, addReview)
 
