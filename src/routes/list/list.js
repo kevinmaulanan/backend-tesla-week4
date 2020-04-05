@@ -7,10 +7,10 @@ const { getListByIdUserLogin, getAllListByIdUserLogin, getAllList } = require('.
 const { checkAuthToken } = require('../../middleware/auth/auth')
 
 list.delete('/', checkAuthToken, deleteList)
-list.get('/', checkAuthToken, getListByIdUserLogin)
+list.post('/', checkAuthToken, getListByIdUserLogin)
 list.get('/list', checkAuthToken, getAllList)
 list.get('/all', checkAuthToken, getAllListByIdUserLogin)
-list.post('/', checkAuthToken, addList)
+list.post('/add', checkAuthToken, addList)
 
 module.exports = {
     list
