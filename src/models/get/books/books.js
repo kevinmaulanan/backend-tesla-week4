@@ -60,6 +60,31 @@ module.exports = {
         })
     },
 
+    getBooksByList: (req, nameList) => {
+        const { paginate } = paginationParams(req)
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT COUNT(*) as total FROM lists WHERE list_name='${nameList}' `, (error, result) => {
+
+                const { total } = result
+                console.log(total)
+                if (total < 1 || total == undefined) {
+                    reject(new Error(`Name List : ${nameList} is not found `))
+                }
+                else {
+                    db.query(`SELECT lists.id, lists.id_book, books.book_name, books.description, books.book_image, global_book_ratings.total_reviewers, global_book_ratings.avg_rating,  lists.list_name FROM books JOIN global_book_ratings ON books.id_global_rating = global_book_ratings.id JOIN lists ON lists.id_book=books.id WHERE lists.list_name = '${nameList}'  ${paginate}`, (error, result) => {
+                        if (error) {
+                            reject(error)
+                        } else {
+                            const data = result
+                            resolve({ data, total })
+                        }
+                    })
+                }
+            })
+
+        })
+    },
+
     getBooksByGenreId: (id, req) => {
         const { conditions, paginate } = paginationParams(req)
         return new Promise((resolve, reject) => {
@@ -84,7 +109,6 @@ module.exports = {
         })
     },
 
-
     getBooksByAuthorId: (authorId, req) => {
         const { conditions, paginate } = paginationParams(req)
         return new Promise((resolve, reject) => {
@@ -98,10 +122,8 @@ module.exports = {
                     db.query(`SELECT books.id, books.book_name, books.description, books.book_image,global_book_ratings.total_reviewers, global_book_ratings.avg_rating, authors.author_name FROM books JOIN authors ON books.id_author=authors.id JOIN global_book_ratings ON books.id_global_rating=global_book_ratings.id ${conditions} AND authors.id=${authorId} && books.is_deleted=0 ${paginate}`, (error, result) => {
                         if (error) {
                             console.log(error)
-                            reject(new Error(`Server error: Failed to get books by author`))
+                            reject(new Error(`Server error: Failed to get books by lists`))
                         } else {
-
-                            console.log(result)
                             const data = result
                             resolve({ data, total })
                         }

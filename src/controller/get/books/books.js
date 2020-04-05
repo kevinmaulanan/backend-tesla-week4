@@ -26,6 +26,33 @@ const getBookById = async (req, res) => {
     }
 }
 
+const getBooksByList = async (req, res) => {
+    try {
+        const { nameList } = req.body
+        const { data, total } = await books.getBooksByList(req, nameList)
+        console.log(data)
+        const pagination = paginate(req, `books/list`, total)
+        if (data) {
+            res.status(200).send({
+                success: true,
+                message: 'Success to get books by List',
+                data,
+                pagination
+            })
+        } else {
+            res.status(404).send({
+                success: false,
+                message: 'Not found'
+            })
+        }
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 
 const getBooksByGenreId = async (req, res) => {
     try {
@@ -136,6 +163,7 @@ module.exports = {
     getBooksByGenreId,
     getBooksByAuthorId,
     getPopularBooks,
+    getBooksByList,
 }
 
 
