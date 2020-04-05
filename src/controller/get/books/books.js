@@ -104,12 +104,38 @@ const getAllBooks = async (req, res) => {
     }
 }
 
+const getPopularBooks = async (req, res) => {
+    try {
+        const { data, total } = await books.getPopulerBooks(req)
+        const pagination = paginate(req, 'books/popular', total)
+        if (data) {
+            res.status(200).send({
+                success: true,
+                message: 'Success to get all books',
+                data,
+                pagination,
+            })
+        } else {
+            res.status(404).send({
+                success: false,
+                message: 'Not found'
+            })
+        }
+    } catch (error) {
+        res.status(500).send({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
 
 module.exports = {
     getAllBooks,
     getBookById,
     getBooksByGenreId,
     getBooksByAuthorId,
+    getPopularBooks,
 }
 
 

@@ -110,4 +110,29 @@ module.exports = {
             })
         })
     },
+
+    getPopulerBooks: (req) => {
+        return new Promise((resolve, reject) => {
+            db.query(`SELECT COUNT(*) as total FROM books`, (error, result) => {
+                console.log(result[0])
+                const { total } = result[0]
+                if (total === 0) {
+                    reject(new Error('Tidak ada Buku'))
+                } else {
+                    db.query(`SELECT books.id, books.book_name, books.description, books.book_image, global_book_ratings.avg_rating FROM books JOIN global_book_ratings ON books.id_global_rating = global_book_ratings.id ORDER BY global_book_ratings.avg_rating DESC LIMIT 10`, (error, result) => {
+                        if (error) {
+                            console.log(error)
+                            reject(new Error('Kesalahan pada saat Query Books All'))
+                        } else {
+                            const data = result
+                            resolve({ data, total })
+                        }
+
+                    })
+                }
+            })
+
+
+        })
+    }
 }
