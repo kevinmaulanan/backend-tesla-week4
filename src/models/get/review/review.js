@@ -10,7 +10,7 @@ module.exports = {
                 if (total !== 1) {
                     reject(new Error('Buku not found'))
                 } else {
-                    db.query(`SELECT *FROM reviews WHERE id_book=${idBook} ${conditions} ${paginate}`, (error, result) => {
+                    db.query(`SELECT reviews.id,reviews.id_user,reviews.id_book, reviews.review, user_details.user_fullname, user_details.user_image FROM reviews JOIN user_details ON reviews.id_user= user_details.id WHERE reviews.id_book=${idBook} ${conditions} ${paginate}`, (error, result) => {
                         if (error) {
                             console.log(error)
                             reject(new Error('Kesalahan pada query getAllBook'))
