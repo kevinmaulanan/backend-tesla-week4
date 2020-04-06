@@ -9,6 +9,7 @@ db.query(
       id_author INT,
       id_global_rating INT,
       is_deleted TINYINT DEFAULT 0,
+      amazon_url TEXT,
       FOREIGN KEY (id_author) REFERENCES authors(id) ON DELETE CASCADE ON UPDATE CASCADE,
       FOREIGN KEY (id_global_rating) REFERENCES global_book_ratings(id) ON DELETE CASCADE ON UPDATE CASCADE
     );`,

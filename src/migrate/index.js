@@ -29,6 +29,7 @@ function  migrate() {
   require('./migrations/migrations1/global_book_ratings')
   require('./migrations/migrations1/books')
   require('./migrations/migrations1/book_ratings_by_user')
+  require('./migrations/migrations1/books_favorite_by_user')
   require('./migrations/migrations1/lists')
   require('./migrations/migrations1/reviews')
   require('./migrations/migrations1/bridge_books_genres')
